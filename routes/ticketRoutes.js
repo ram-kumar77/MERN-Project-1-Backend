@@ -8,12 +8,12 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 router.post('/purchase', authMiddleware, async (req, res) => {
   try {
     console.log('Purchase request body:', req.body);
-    const { eventId, quantity, paymentMethod } = req.body;
+    const { eventId, quantity, paymentMethod, ticketType, userDetails } = req.body;
     
-    if (!eventId || !quantity || !paymentMethod) {
+    if (!eventId || !quantity || !paymentMethod || !ticketType || !userDetails) {
       return res.status(400).json({ 
         message: 'Missing required fields',
-        required: ['eventId', 'quantity', 'paymentMethod']
+        required: ['eventId', 'quantity', 'paymentMethod', 'ticketType', 'userDetails']
       });
     }
 
@@ -36,7 +36,9 @@ router.post('/purchase', authMiddleware, async (req, res) => {
       event: eventId,
       quantity,
       paymentMethod,
-      totalPrice: event.ticketPrice * quantity
+      totalPrice: event.ticketPrice * quantity,
+      ticketType, // New field
+      userDetails // New field
     });
 
     // Update event available tickets
@@ -49,7 +51,7 @@ router.post('/purchase', authMiddleware, async (req, res) => {
 
     res.status(201).json(ticket);
   } catch (error) {
-    console.error('Ticket purchase error:', error);
+    console.error('Ticket purchase error:', error); // Log the error details
     res.status(500).json({ 
       message: 'Ticket purchase failed', 
       error: error.message,
@@ -57,7 +59,6 @@ router.post('/purchase', authMiddleware, async (req, res) => {
     });
   }
 });
-
 
 // Get user tickets
 router.get('/user', authMiddleware, async (req, res) => {

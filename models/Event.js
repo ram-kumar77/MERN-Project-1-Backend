@@ -26,8 +26,8 @@ const eventSchema = new mongoose.Schema({
     default: Date.now
   },
   image: {
-    type: String,
-    required: true
+    type: String, // This can be a URL or a buffer depending on how you want to store the image
+    required: false // Make it optional for now
   }
 });
 

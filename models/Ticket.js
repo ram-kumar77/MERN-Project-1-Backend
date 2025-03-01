@@ -26,6 +26,14 @@ const TicketSchema = new mongoose.Schema({
   purchaseDate: { 
     type: Date, 
     default: Date.now 
+  },
+  ticketType: { 
+    type: String, 
+    required: true 
+  },
+  userDetails: { 
+    type: Object, 
+    required: true 
   }
 });
 

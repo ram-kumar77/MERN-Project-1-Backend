@@ -13,7 +13,7 @@ router.get('/me', authMiddleware, async (req, res) => {
     const userId = req.user?.id; // Use id from the decoded token
 
     if (!userId) {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res  .status(401).json({ message: 'Unauthorized' });
     }
 
     const user = await User.findById(userId).select('-password'); // Exclude password

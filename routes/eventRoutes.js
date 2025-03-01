@@ -1,6 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const multer = require('multer');
 const router = express.Router();
+
+// Configure multer for file uploads
+const storage = multer.memoryStorage(); // Store files in memory
+const upload = multer({ storage: storage });
 const Event = require('../models/Event');
 const { authMiddleware, adminMiddleware } = require('../middleware/authMiddleware');
 
@@ -18,8 +23,7 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-// Create new event (Admin only)
-router.post('/', [authMiddleware, adminMiddleware], async (req, res) => {
+router.post('/', [authMiddleware], async (req, res) => {
   try {
     const newEvent = new Event(req.body);
     await newEvent.save();
@@ -71,6 +75,10 @@ router.get('/:id', authMiddleware, async (req, res) => {
 // Delete event (Admin only)
 router.delete('/:id', [authMiddleware, adminMiddleware], async (req, res) => {
   try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
     await Event.findByIdAndDelete(req.params.id);
     res.json({ message: 'Event deleted successfully' });
   } catch (error) {
